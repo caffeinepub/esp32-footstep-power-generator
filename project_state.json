@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
+  "projectStateVersion": 5,
   "summary": "Android-style ESP32 Footstep Power Generator web app that connects to an ESP32 device over WiFi, displays real-time power generation data (steps, power, battery, voltage, current, energy), shows live-updating charts, features a dark futuristic UI with blue/cyan/green gradients, and persists lifetime data in browser storage.",
   "architectural_notes": [
     "Frontend-only web app (React + TypeScript); no Motoko backend needed — ESP32 is the data source",
@@ -12,7 +12,6 @@
     "Browser CORS policy may block direct HTTP requests to ESP32; ESP32 firmware must include CORS headers"
   ],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Futuristic glowing foot/footstep icon on dark background with cyan and green neon glow effect (foot-icon.dim_128x128.png)\n- Animated-style lightning bolt power icon with blue and cyan gradient neon glow on dark background (power-icon.dim_128x128.png)\n- Futuristic battery icon with green gradient fill and neon glow outline on dark background (battery-icon.dim_128x128.png)",
   "existing_features": [
     {
       "id": "feature-build-a-wifi-connectivity-service-in-the-frontend-that-polls-a-configurable-esp32-ip-address-default-http-192-168-4-1-data-via-http-get-every-1-second-parse-the-json-response-containing-steps-power-battery-totalenergy-usedenergy-voltage-and-current-fields-implement-auto-reconnect-logic-with-exponential-backoff-on-failure-track-connection-state-as-online-or-offline",
@@ -59,6 +58,14 @@
       "title": "Add a Settings panel accessible from the header where the user can view and change the ESP32 IP address/URL. The new URL should be saved to localStorage and take effect immediately on the next poll cycle.",
       "reqIds": [
         "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-default-esp32-polling-url-from-http-192-168-4-1-data-to-http-192-168-43-148-data-in-the-useesp32connection-hook-this-default-should-be-used-when-no-url-has-been-saved-to-localstorage",
+      "title": "Change the default ESP32 polling URL from http://192.168.4.1/data to http://192.168.43.148/data in the useESP32Connection hook. This default should be used when no URL has been saved to localStorage.",
+      "reqIds": [
+        "REQ-8"
       ],
       "version": 1
     }
@@ -112,6 +119,12 @@
       "reqIds": [
         "REQ-1"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Set default ESP32 IP address to 192.168.43.148 (instead of 192.168.4.1)",
+      "reqIds": [],
       "status": "pending"
     }
   ],

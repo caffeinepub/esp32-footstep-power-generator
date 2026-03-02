@@ -1,153 +1,22 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "ESP32 Footstep Power Generator Web App - Frontend Implementation",
+  "title": "Update default ESP32 IP address to 192.168.43.148",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Implement WiFi connectivity service to poll ESP32 device via HTTP GET every 1 second with auto-reconnect logic and connection state tracking",
+      "id": "REQ-8",
+      "summary": "Change the default ESP32 polling URL from http://192.168.4.1/data to http://192.168.43.148/data in the useESP32Connection hook",
       "acceptanceCriteria": [
-        "App polls the configured URL every 1 second when ONLINE",
-        "IP address is configurable by the user and persisted in localStorage",
-        "Connection status updates to OFFLINE within 2 seconds of failed requests",
-        "Auto-retry attempts reconnection automatically after failure",
-        "Last used IP address is remembered across page reloads"
+        "The default ESP32 URL constant in useESP32Connection.ts is set to http://192.168.43.148/data",
+        "On first load (no localStorage entry), the app polls http://192.168.43.148/data",
+        "The Settings panel pre-fills with http://192.168.43.148/data when no custom URL has been saved",
+        "Existing localStorage-saved URLs continue to take precedence over the new default"
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useESP32Connection.ts",
-          "operation": "create",
-          "description": "Create a custom React hook that manages ESP32 HTTP polling at 1-second intervals, parses JSON response containing steps, power, battery, totalEnergy, usedEnergy, voltage, and current fields, implements exponential backoff retry logic on failure, and tracks connection state (ONLINE/OFFLINE). Store and retrieve ESP32 IP address from localStorage with default value http://192.168.4.1/data. Return connection status, latest sensor data, and methods to update the IP address."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Build Dashboard screen displaying real-time metrics with animated foot icon on step detection, charging battery animation, and power flow animation",
-      "acceptanceCriteria": [
-        "All 7 data fields (steps, power, battery, voltage, current, totalEnergy, usedEnergy) are displayed",
-        "ONLINE/OFFLINE badge updates in real time",
-        "Foot icon triggers a CSS animation when the steps value increases",
-        "Battery icon shows a pulsing/charging animation when battery < 100% and power > 0",
-        "Power flow animation (e.g., flowing dots or wave) is visible when current power > 0",
-        "Shows 'Device Offline' message when ESP32 is unreachable"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/Dashboard.tsx",
-          "operation": "create",
-          "description": "Create Dashboard component that displays footstep count, current power in Watts, battery percentage, voltage, current, total energy generated, and total energy used. Include prominent ONLINE/OFFLINE status badge that updates based on connection state. Wire generated images (frontend/public/assets/generated/foot-icon.dim_128x128.png, frontend/public/assets/generated/battery-icon.dim_128x128.png, frontend/public/assets/generated/power-icon.dim_128x128.png) as static assets for metric cards. Implement CSS animation classes for foot icon step detection, battery charging pulse effect, and power flow animation. Show 'Device Offline' message when connection is OFFLINE."
-        },
-        {
-          "path": "frontend/src/components/MetricCard.tsx",
-          "operation": "create",
-          "description": "Create reusable MetricCard component that displays a metric value with label, icon, and unit. Support optional CSS animation classes for glowing/neon border effects and icon animations. Accept props for value, label, unit, icon image path, and animation state."
-        },
-        {
-          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Add CSS keyframe animations for foot icon step pulse, battery charging glow pulse, and power flow wave effect. Define animation classes that can be conditionally applied to metric card icons."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Build Graph screen with four live-updating line charts (Power, Steps, Battery, Energy vs Time) maintaining a rolling 60-point window using Recharts",
-      "acceptanceCriteria": [
-        "Four separate charts are displayed on the Graph screen",
-        "Each chart updates in real time as new data arrives",
-        "Charts show at most 60 data points and scroll/drop old points",
-        "Charts are clearly labeled with axis titles and units",
-        "Charts are readable on mobile screen widths"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/GraphScreen.tsx",
-          "operation": "create",
-          "description": "Create GraphScreen component with four line charts using Recharts: Power vs Time (Watts), Steps vs Time (count), Battery vs Time (%), and Energy vs Time (Wh). Each chart maintains a rolling buffer of the last 60 data points. Configure charts with responsive containers, axis labels with units, and appropriate gradient stroke colors (blue, cyan, green). Ensure charts are mobile-optimized and readable on 375px width screens."
-        },
-        {
-          "path": "frontend/src/hooks/useChartData.ts",
-          "operation": "create",
-          "description": "Create custom hook that maintains four rolling data buffers (power, steps, battery, energy) with maximum 60 points each. Accept new data points and automatically remove oldest points when buffer exceeds 60. Return formatted data arrays suitable for Recharts LineChart components with timestamp labels."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Persist lifetime stats in localStorage with periodic backend sync, merging maximum values on app load",
-      "acceptanceCriteria": [
-        "Lifetime stats are written to localStorage on every update",
-        "On app start, localStorage data is loaded immediately before backend data arrives",
-        "Backend is updated periodically (every 30 seconds) with accumulated deltas",
-        "Data survives full page reload"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useLifetimeStats.ts",
-          "operation": "create",
-          "description": "Create custom hook that manages lifetime statistics (totalFootsteps, totalEnergyGenerated, totalRuntime). On mount, load values from localStorage immediately, then fetch from backend using getTotalFootsteps(), getTotalEnergy(), and getTotalRuntime() methods, merging by taking maximum of each field. Track accumulated deltas and sync to backend every 30 seconds using addFootsteps(), addEnergy(), and addRuntime() methods. Write to localStorage on every stat update. Return current lifetime stats and update methods."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Apply dark futuristic UI theme with neon glow effects, large metric numbers, and bottom navigation bar for mobile-optimized layout",
-      "acceptanceCriteria": [
-        "Background is dark (#0a0a0f or similar near-black)",
-        "Metric cards use neon/glow border effects in blue, cyan, or green",
-        "Key numbers (power, steps, battery) are displayed in large bold fonts (≥2rem)",
-        "Navigation between Dashboard and Graph is smooth with CSS transitions",
-        "Layout is usable on 375px wide mobile screens without horizontal scroll",
-        "Bottom navigation bar with Dashboard and Graph tabs is present"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Define dark futuristic theme with near-black background (#0a0a0f), gradient accent colors in CSS custom properties (--accent-blue: #00BFFF, --accent-cyan: #00FFFF, --accent-green: #39FF14). Add utility classes for neon/glow border effects using box-shadow with accent colors. Define large metric number typography (font-size: 2.5rem, font-weight: 700). Add smooth transition classes for page navigation (transition: all 0.3s ease). Ensure all styles are mobile-optimized for 375px minimum width."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Extend Tailwind theme with custom dark futuristic colors (dark-bg: #0a0a0f, accent-blue: #00BFFF, accent-cyan: #00FFFF, accent-green: #39FF14). Add custom box-shadow utilities for neon glow effects. Configure responsive breakpoints to ensure mobile-first design at 375px minimum."
-        },
-        {
-          "path": "frontend/src/components/BottomNavigation.tsx",
-          "operation": "create",
-          "description": "Create BottomNavigation component with fixed bottom positioning containing Dashboard and Graph navigation tabs. Apply dark theme styling with neon border highlights on active tab. Use CSS transitions for smooth tab switching. Ensure component is fully responsive on mobile screens."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "create",
-          "description": "Create Layout wrapper component that applies dark background, contains header with app title, renders children (Dashboard or GraphScreen), and includes BottomNavigation component. Ensure proper spacing for fixed bottom navigation and mobile-safe layout without horizontal scroll."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Modify App component to manage navigation state between Dashboard and GraphScreen. Integrate useESP32Connection hook to fetch real-time sensor data. Integrate useLifetimeStats hook for persistent stats. Integrate useChartData hook to feed chart components. Wrap content in Layout component. Pass connection state, sensor data, and lifetime stats to Dashboard and GraphScreen via props. Wire BottomNavigation to update active route state."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Add Settings panel in header for viewing and changing ESP32 IP address with immediate effect and localStorage persistence",
-      "acceptanceCriteria": [
-        "Settings panel shows the current ESP32 URL",
-        "User can edit and save a new URL",
-        "Saved URL persists in localStorage across reloads",
-        "Polling uses the updated URL immediately after saving"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/SettingsPanel.tsx",
-          "operation": "create",
-          "description": "Create SettingsPanel component with input field displaying current ESP32 IP address/URL, save button, and cancel button. On save, update the URL via the method provided by useESP32Connection hook, which will persist to localStorage and restart polling with the new URL immediately. Apply dark theme styling with neon accent borders. Component should be toggleable from header."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "create",
-          "description": "Create Header component with app title 'Footstep Power Monitor' and settings icon button that toggles the SettingsPanel. Apply dark theme styling with gradient text effect on title. Ensure header is mobile-responsive and does not cause horizontal scroll."
+          "description": "Update the default ESP32 device URL constant from 'http://192.168.4.1/data' to 'http://192.168.43.148/data'. Ensure this default is used when no URL has been saved to localStorage, and that the new default is returned by getDeviceUrl() when localStorage is empty. Verify that existing saved URLs in localStorage continue to take precedence over the new default."
         }
       ]
     }

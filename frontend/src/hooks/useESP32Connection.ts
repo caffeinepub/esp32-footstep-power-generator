@@ -12,7 +12,7 @@ export interface SensorData {
   current: number;
 }
 
-const DEFAULT_URL = 'http://192.168.4.1/data';
+const DEFAULT_URL = 'http://192.168.43.148/data';
 const STORAGE_KEY = 'esp32_url';
 const POLL_INTERVAL = 1000;
 

@@ -1,199 +1,38 @@
 {
   "kind": "build_request",
-  "title": "ESP32 Footstep Power Generator Web App",
-  "projectName": "Footstep Power Monitor",
+  "title": "Update default ESP32 IP address to 192.168.43.148",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Create a backend actor that stores lifetime persistent data: total footsteps, total energy generated (Wh), and total runtime (seconds). Expose query and update methods to read and increment these values.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Store lifetime data",
-          "Total footsteps",
-          "Total energy generated",
-          "Total runtime",
-          "Data must remain saved after app restart"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend stores totalFootsteps, totalEnergyGenerated, totalRuntime as stable variables",
-        "Provides getLifetimeStats query method returning all three values",
-        "Provides updateLifetimeStats update method that increments each value",
-        "Data persists across canister upgrades"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Build a WiFi connectivity service in the frontend that polls a configurable ESP32 IP address (default: http://192.168.4.1/data) via HTTP GET every 1 second. Parse the JSON response containing steps, power, battery, totalEnergy, usedEnergy, voltage, and current fields. Implement auto-reconnect logic with exponential backoff on failure. Track connection state as ONLINE or OFFLINE.",
+      "id": "REQ-8",
+      "text": "Change the default ESP32 polling URL from http://192.168.4.1/data to http://192.168.43.148/data in the useESP32Connection hook. This default should be used when no URL has been saved to localStorage.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-6"
         ],
         "quotes": [
-          "Connect to ESP32 using WiFi",
-          "Default IP: http://192.168.4.1/data",
-          "Fetch data every 1 second using HTTP GET",
-          "Auto reconnect to ESP32",
-          "Show connection status"
+          "192.168.43.148 add this ip"
         ]
       },
       "acceptanceCriteria": [
-        "App polls the configured URL every 1 second when ONLINE",
-        "IP address is configurable by the user and persisted in localStorage",
-        "Connection status updates to OFFLINE within 2 seconds of failed requests",
-        "Auto-retry attempts reconnection automatically after failure",
-        "Last used IP address is remembered across page reloads"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Build a Dashboard screen that displays: footstep count, current power in Watts, battery percentage with charging animation, voltage, current, total energy generated, total energy used, and a prominent ONLINE/OFFLINE system status indicator. Animate a foot icon whenever a new step is detected. Include a power flow animation when power > 0.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Dashboard Screen",
-          "Footstep count",
-          "Current power (Watts)",
-          "Battery percentage",
-          "Voltage and Current",
-          "Total energy generated",
-          "Total energy used",
-          "System status (ONLINE / OFFLINE)",
-          "Animate foot icon when step detected",
-          "Animate battery charging",
-          "Animate power flow"
-        ]
-      },
-      "acceptanceCriteria": [
-        "All 7 data fields (steps, power, battery, voltage, current, totalEnergy, usedEnergy) are displayed",
-        "ONLINE/OFFLINE badge updates in real time",
-        "Foot icon triggers a CSS animation when the steps value increases",
-        "Battery icon shows a pulsing/charging animation when battery < 100% and power > 0",
-        "Power flow animation (e.g., flowing dots or wave) is visible when current power > 0",
-        "Shows 'Device Offline' message when ESP32 is unreachable"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Build a Graph screen with four live-updating line charts: Power vs Time, Steps vs Time, Battery vs Time, and Energy vs Time. Each chart maintains a rolling window of the last 60 data points. Use a charting library (Recharts or Chart.js via react-chartjs-2) suitable for React.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Graph Screen",
-          "Power vs Time",
-          "Steps vs Time",
-          "Battery vs Time",
-          "Energy vs Time",
-          "live updating graphs"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Four separate charts are displayed on the Graph screen",
-        "Each chart updates in real time as new data arrives",
-        "Charts show at most 60 data points and scroll/drop old points",
-        "Charts are clearly labeled with axis titles and units",
-        "Charts are readable on mobile screen widths"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Persist lifetime stats (total footsteps, total energy generated, total runtime) in localStorage as a fallback for offline use, and sync increments to the backend canister when connected. On app load, merge localStorage values with backend values taking the maximum of each field.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Data Storage",
-          "Data must remain saved after app restart",
-          "total footsteps",
-          "total energy generated",
-          "total runtime"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Lifetime stats are written to localStorage on every update",
-        "On app start, localStorage data is loaded immediately before backend data arrives",
-        "Backend is updated periodically (every 30 seconds) with accumulated deltas",
-        "Data survives full page reload"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Apply a dark futuristic UI theme with a near-black background, gradient accents in blue (#00BFFF), cyan (#00FFFF), and green (#39FF14), large bold numbers for key metrics, a glowing/neon card style, and a bottom navigation bar for switching between Dashboard and Graph screens. Ensure the layout is fully mobile-optimized.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Modern futuristic UI",
-          "Dark theme",
-          "Gradient colors (blue, cyan, green)",
-          "Large readable numbers",
-          "Mobile optimized layout",
-          "Smooth UI transitions"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Background is dark (#0a0a0f or similar near-black)",
-        "Metric cards use neon/glow border effects in blue, cyan, or green",
-        "Key numbers (power, steps, battery) are displayed in large bold fonts (≥2rem)",
-        "Navigation between Dashboard and Graph is smooth with CSS transitions",
-        "Layout is usable on 375px wide mobile screens without horizontal scroll",
-        "Bottom navigation bar with Dashboard and Graph tabs is present"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Add a Settings panel accessible from the header where the user can view and change the ESP32 IP address/URL. The new URL should be saved to localStorage and take effect immediately on the next poll cycle.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Auto connect to last used IP address",
-          "Default IP: http://192.168.4.1/data"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Settings panel shows the current ESP32 URL",
-        "User can edit and save a new URL",
-        "Saved URL persists in localStorage across reloads",
-        "Polling uses the updated URL immediately after saving"
+        "The default ESP32 URL constant in useESP32Connection.ts is set to http://192.168.43.148/data",
+        "On first load (no localStorage entry), the app polls http://192.168.43.148/data",
+        "The Settings panel pre-fills with http://192.168.43.148/data when no custom URL has been saved",
+        "Existing localStorage-saved URLs continue to take precedence over the new default"
       ]
     }
   ],
   "constraints": [
-    "Do not use WebSockets; use HTTP polling only",
-    "ESP32 communication must originate from the browser (frontend), not the backend canister",
-    "All Motoko logic must remain in a single main actor file"
+    "Do not change any other polling logic, reconnect behavior, or settings panel functionality"
   ],
   "nonGoals": [
-    "Android APK or native mobile app generation",
-    "CORS proxy or server-side relay for ESP32 requests",
-    "User authentication or Internet Identity integration",
-    "ESP32 firmware generation"
+    "Changing any backend canister code",
+    "Modifying the Settings panel UI or save behavior",
+    "Altering chart, dashboard, or lifetime stats features"
   ],
   "imageRequirements": {
-    "required": [
-      "Futuristic glowing foot/footstep icon on dark background with cyan and green neon glow effect (foot-icon.dim_128x128.png)",
-      "Animated-style lightning bolt power icon with blue and cyan gradient neon glow on dark background (power-icon.dim_128x128.png)",
-      "Futuristic battery icon with green gradient fill and neon glow outline on dark background (battery-icon.dim_128x128.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

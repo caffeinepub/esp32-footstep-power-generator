@@ -1,4 +1,4 @@
-## ESP32 Footstep Power Generator
+## 
 
 This source code has been exported from [Caffeine](https://caffeine.ai/)
 
