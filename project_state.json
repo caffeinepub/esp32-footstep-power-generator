@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Android-style ESP32 Footstep Power Generator web app that connects to an ESP32 device over WiFi, displays real-time power generation data (steps, power, battery, voltage, current, energy), shows live-updating charts, features a dark futuristic UI with blue/cyan/green gradients, and persists lifetime data in browser storage.",
+  "architectural_notes": [
+    "Frontend-only web app (React + TypeScript); no Motoko backend needed — ESP32 is the data source",
+    "ESP32 JSON endpoint: { steps, power, battery, totalEnergy, usedEnergy, voltage, current } polled via HTTP GET every 1 second",
+    "Charts implemented using Chart.js or Recharts (MPAndroidChart not available in web)",
+    "Lifetime data persisted in localStorage (totalFootsteps, totalEnergyGenerated, totalRuntime)"
+  ],
+  "known_issues": [
+    "Browser CORS policy may block direct HTTP requests to ESP32; ESP32 firmware must include CORS headers"
+  ],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Futuristic glowing foot/footstep icon on dark background with cyan and green neon glow effect (foot-icon.dim_128x128.png)\n- Animated-style lightning bolt power icon with blue and cyan gradient neon glow on dark background (power-icon.dim_128x128.png)\n- Futuristic battery icon with green gradient fill and neon glow outline on dark background (battery-icon.dim_128x128.png)",
+  "existing_features": [
+    {
+      "id": "feature-build-a-wifi-connectivity-service-in-the-frontend-that-polls-a-configurable-esp32-ip-address-default-http-192-168-4-1-data-via-http-get-every-1-second-parse-the-json-response-containing-steps-power-battery-totalenergy-usedenergy-voltage-and-current-fields-implement-auto-reconnect-logic-with-exponential-backoff-on-failure-track-connection-state-as-online-or-offline",
+      "title": "Build a WiFi connectivity service in the frontend that polls a configurable ESP32 IP address (default: http://192.168.4.1/data) via HTTP GET every 1 second. Parse the JSON response containing steps, power, battery, totalEnergy, usedEnergy, voltage, and current fields. Implement auto-reconnect logic with exponential backoff on failure. Track connection state as ONLINE or OFFLINE.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-dashboard-screen-that-displays-footstep-count-current-power-in-watts-battery-percentage-with-charging-animation-voltage-current-total-energy-generated-total-energy-used-and-a-prominent-online-offline-system-status-indicator-animate-a-foot-icon-whenever-a-new-step-is-detected-include-a-power-flow-animation-when-power-0",
+      "title": "Build a Dashboard screen that displays: footstep count, current power in Watts, battery percentage with charging animation, voltage, current, total energy generated, total energy used, and a prominent ONLINE/OFFLINE system status indicator. Animate a foot icon whenever a new step is detected. Include a power flow animation when power > 0.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-graph-screen-with-four-live-updating-line-charts-power-vs-time-steps-vs-time-battery-vs-time-and-energy-vs-time-each-chart-maintains-a-rolling-window-of-the-last-60-data-points-use-a-charting-library-recharts-or-chart-js-via-react-chartjs-2-suitable-for-react",
+      "title": "Build a Graph screen with four live-updating line charts: Power vs Time, Steps vs Time, Battery vs Time, and Energy vs Time. Each chart maintains a rolling window of the last 60 data points. Use a charting library (Recharts or Chart.js via react-chartjs-2) suitable for React.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-persist-lifetime-stats-total-footsteps-total-energy-generated-total-runtime-in-localstorage-as-a-fallback-for-offline-use-and-sync-increments-to-the-backend-canister-when-connected-on-app-load-merge-localstorage-values-with-backend-values-taking-the-maximum-of-each-field",
+      "title": "Persist lifetime stats (total footsteps, total energy generated, total runtime) in localStorage as a fallback for offline use, and sync increments to the backend canister when connected. On app load, merge localStorage values with backend values taking the maximum of each field.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-dark-futuristic-ui-theme-with-a-near-black-background-gradient-accents-in-blue-00bfff-cyan-00ffff-and-green-39ff14-large-bold-numbers-for-key-metrics-a-glowing-neon-card-style-and-a-bottom-navigation-bar-for-switching-between-dashboard-and-graph-screens-ensure-the-layout-is-fully-mobile-optimized",
+      "title": "Apply a dark futuristic UI theme with a near-black background, gradient accents in blue (#00BFFF), cyan (#00FFFF), and green (#39FF14), large bold numbers for key metrics, a glowing/neon card style, and a bottom navigation bar for switching between Dashboard and Graph screens. Ensure the layout is fully mobile-optimized.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-settings-panel-accessible-from-the-header-where-the-user-can-view-and-change-the-esp32-ip-address-url-the-new-url-should-be-saved-to-localstorage-and-take-effect-immediately-on-the-next-poll-cycle",
+      "title": "Add a Settings panel accessible from the header where the user can view and change the ESP32 IP address/URL. The new URL should be saved to localStorage and take effect immediately on the next poll cycle.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "WiFi connectivity to ESP32 at configurable IP (default http://192.168.4.1/data), HTTP GET polling every 1 second, auto-reconnect, connection status indicator",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Dashboard screen showing footstep count, current power (W), battery %, voltage, current, total energy generated, total energy used, and ONLINE/OFFLINE status",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Graph screen with live-updating charts: Power vs Time, Steps vs Time, Battery vs Time, Energy vs Time",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Animation system: foot icon animation on step detection, battery charging animation, power flow animation, smooth UI transitions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Persistent data storage using localStorage: total footsteps, total energy generated, total runtime — survives app restart",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Dark futuristic UI with gradient colors (blue, cyan, green), large readable numbers, mobile-optimized layout",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Error handling: show 'Device Offline' message when ESP32 unreachable, auto-retry connection",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Create a backend actor that stores lifetime persistent data: total footsteps, total energy generated (Wh), and total runtime (seconds). Expose query and update methods to read and increment these values.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "ESP32 Footstep Power Generator",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
